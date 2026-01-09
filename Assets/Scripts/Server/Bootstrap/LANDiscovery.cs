@@ -45,12 +45,8 @@ namespace Assets.Scripts.Server.Bootstrap
             DontDestroyOnLoad( gameObject );
         }
 
-        void Start()
-        {
-            StartUDP();
-        }
 
-        void StartUDP()
+        public void StartUDP()
         {
             try
             {

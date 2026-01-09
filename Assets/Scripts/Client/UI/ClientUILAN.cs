@@ -25,7 +25,7 @@ namespace Assets.Scripts.Client.UI
 
             // Inicia discovery
             LANDiscovery.Instance.OnServerFound += OnServerFound;
-            LANDiscovery.Instance.StartClientDiscovery();
+            LANDiscovery.Instance.StartUDP();
         }
 
         void OnDestroy()
