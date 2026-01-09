@@ -8,14 +8,6 @@ using System.Text;
 
 namespace Assets.Scripts.Server.Bootstrap
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
-    using Unity.Netcode;
-    using UnityEngine;
-
     public class LANDiscovery : MonoBehaviour
     {
         public static LANDiscovery Instance;
@@ -28,10 +20,9 @@ namespace Assets.Scripts.Server.Bootstrap
         public event Action<string> OnServerFound;
 
         UdpClient udp;
-        IPEndPoint receiveEP;
         float timer;
 
-        HashSet<string> discoveredServers = new HashSet<string>();
+        readonly HashSet<string> discoveredServers = new HashSet<string>();
 
         void Awake()
         {
@@ -45,6 +36,10 @@ namespace Assets.Scripts.Server.Bootstrap
             DontDestroyOnLoad( gameObject );
         }
 
+        void Start()
+        {
+            //StartUDP();
+        }
 
         public void StartUDP()
         {
@@ -53,22 +48,67 @@ namespace Assets.Scripts.Server.Bootstrap
                 udp = new UdpClient( broadcastPort );
                 udp.EnableBroadcast = true;
 
-                // Importante: evita bloquear el frame
-                udp.Client.ReceiveTimeout = 1;
+                // ⚠️ MUY IMPORTANTE EN WINDOWS
+                udp.Client.SetSocketOption(
+                    SocketOptionLevel.Socket,
+                    SocketOptionName.ReuseAddress,
+                    true );
 
-                receiveEP = new IPEndPoint( IPAddress.Any, 0 );
+                BeginReceive();
 
-                Debug.Log( $"[LANDiscovery] UDP ready on port {broadcastPort}" );
+                Debug.Log( $"[LANDiscovery] UDP listening on {broadcastPort}" );
             }
             catch ( Exception e )
             {
-                Debug.LogError( "[LANDiscovery] Failed to start UDP: " + e );
+                Debug.LogError( "[LANDiscovery] UDP init failed: " + e );
             }
+        }
+
+        void BeginReceive()
+        {
+            try
+            {
+                udp.BeginReceive( OnReceive, null );
+            }
+            catch
+            {
+                // Socket cerrado
+            }
+        }
+
+        void OnReceive( IAsyncResult ar )
+        {
+            IPEndPoint ep = new IPEndPoint( IPAddress.Any, 0 );
+            byte[] data;
+
+            try
+            {
+                data = udp.EndReceive( ar, ref ep );
+            }
+            catch
+            {
+                return;
+            }
+
+            string msg = Encoding.UTF8.GetString( data );
+
+            if ( msg == broadcastMessage )
+            {
+                string serverIP = ep.Address.ToString();
+
+                if ( discoveredServers.Add( serverIP ) )
+                {
+                    Debug.Log( "[LANDiscovery] Server found: " + serverIP );
+                    OnServerFound?.Invoke( serverIP );
+                }
+            }
+
+            BeginReceive(); // 🔁 seguir escuchando
         }
 
         void Update()
         {
-            // 1️⃣ Servidor (host o dedicado) hace broadcast
+            // Servidor (host o dedicado) → broadcast
             if ( NetworkManager.Singleton != null &&
                 NetworkManager.Singleton.IsServer )
             {
@@ -78,11 +118,6 @@ namespace Assets.Scripts.Server.Bootstrap
                     BroadcastServer();
                     timer = 0f;
                 }
-            }
-            else
-            {
-                // 2️⃣ Cliente / Launcher escucha SIEMPRE
-                ListenForServers();
             }
         }
 
@@ -94,53 +129,19 @@ namespace Assets.Scripts.Server.Bootstrap
                 IPEndPoint ep = new IPEndPoint( IPAddress.Broadcast, broadcastPort );
                 udp.Send( data, data.Length, ep );
             }
-            catch ( Exception e )
+            catch
             {
-                Debug.LogWarning( "[LANDiscovery] Broadcast failed: " + e.Message );
+                // Ignorar errores UDP normales
             }
-        }
-
-        void ListenForServers()
-        {
-            if ( udp == null )
-                return;
-
-            try
-            {
-                byte[] data = udp.Receive( ref receiveEP ); // NO bloquea (timeout)
-                string msg = Encoding.UTF8.GetString( data );
-
-                if ( msg != broadcastMessage )
-                    return;
-
-                string serverIP = receiveEP.Address.ToString();
-
-                if ( discoveredServers.Add( serverIP ) )
-                {
-                    Debug.Log( "[LANDiscovery] Server found: " + serverIP );
-                    OnServerFound?.Invoke( serverIP );
-                }
-            }
-            catch ( SocketException e )
-            {
-                // Timeout esperado cuando no hay paquetes
-                if ( e.SocketErrorCode != SocketError.TimedOut )
-                {
-                    Debug.LogWarning( "[LANDiscovery] Socket error: " + e.Message );
-                }
-            }
-        }
-
-        public void ClearDiscoveredServers()
-        {
-            discoveredServers.Clear();
         }
 
         void OnDestroy()
         {
-            udp?.Close();
-            udp = null;
+            try
+            {
+                udp?.Close();
+            }
+            catch { }
         }
     }
-
 }
