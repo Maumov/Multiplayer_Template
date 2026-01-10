@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -201,7 +200,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2118757558}
   - component: {fileID: 2118757556}
-  - component: {fileID: 2118757555}
   m_Layer: 0
   m_Name: Bootstrapper
   m_TagString: Untagged
@@ -209,18 +207,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2118757555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2118757554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c608f353c4380324ab8bb449162601fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2118757556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,6 +219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9297816eb31433640b1ca9c251cadd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ServerPrefab: {fileID: 8938189419269305773, guid: 3a6a7e1c089789941ab379cd6f1177f9,
+    type: 3}
 --- !u!4 &2118757558
 Transform:
   m_ObjectHideFlags: 0

@@ -113,8 +113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   port: 47777
-  message: UNITY_SERVER
   interval: 1
+  broadcastMsg: UNITY_LAN_SERVER
 --- !u!114 &1418991596151175876
 MonoBehaviour:
   m_ObjectHideFlags: 0
