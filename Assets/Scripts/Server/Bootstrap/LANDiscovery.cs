@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using System.Net.NetworkInformation;
 
 namespace Assets.Scripts.Server.Bootstrap
 {
@@ -13,7 +14,7 @@ namespace Assets.Scripts.Server.Bootstrap
         public int port = 47777;
         public float interval = 1f;
         public string broadcastMsg = "UNITY_LAN_SERVER";
-
+        string localIP;
         public Action<string> OnServerFound;
 
         UdpClient sender;
@@ -23,7 +24,17 @@ namespace Assets.Scripts.Server.Bootstrap
 
         void Awake()
         {
+            localIP = GetLocalIPv4();
             StartListener();
+        }
+        string GetLocalIPv4()
+        {
+            foreach ( var ip in Dns.GetHostEntry( Dns.GetHostName() ).AddressList )
+            {
+                if ( ip.AddressFamily == AddressFamily.InterNetwork )
+                    return ip.ToString();
+            }
+            return "";
         }
         void StartListener()
         {
@@ -93,6 +104,12 @@ namespace Assets.Scripts.Server.Bootstrap
                 string msg = Encoding.UTF8.GetString( data );
                 if ( msg == broadcastMsg )
                 {
+                    string ip = ep.Address.ToString();
+
+                    if ( ip == localIP )
+                        return; // ignora self
+
+
                     OnServerFound?.Invoke( ep.Address.ToString() );
                     Debug.Log( "[LANDiscovery] Server found: " + ep.Address );
                 }
@@ -110,17 +127,31 @@ namespace Assets.Scripts.Server.Bootstrap
         IPAddress[] GetBroadcastIPs()
         {
             var list = new System.Collections.Generic.List<IPAddress>();
-            foreach ( var ip in Dns.GetHostEntry( Dns.GetHostName() ).AddressList )
+
+            foreach ( NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces() )
             {
-                if ( ip.AddressFamily == AddressFamily.InterNetwork )
+                if ( ni.OperationalStatus != OperationalStatus.Up )
+                    continue;
+
+                foreach ( UnicastIPAddressInformation ua in ni.GetIPProperties().UnicastAddresses )
                 {
-                    var b = ip.GetAddressBytes();
-                    b[ 3 ] = 255;
-                    list.Add( new IPAddress( b ) );
+                    if ( ua.Address.AddressFamily != AddressFamily.InterNetwork )
+                        continue;
+
+                    byte[] ip = ua.Address.GetAddressBytes();
+                    byte[] mask = ua.IPv4Mask.GetAddressBytes();
+
+                    byte[] broadcast = new byte[ 4 ];
+                    for ( int i = 0 ; i < 4 ; i++ )
+                        broadcast[ i ] = ( byte ) ( ip[ i ] | ( ~mask[ i ] ) );
+
+                    list.Add( new IPAddress( broadcast ) );
                 }
             }
+
             return list.ToArray();
         }
+
         void OnDestroy()
         {
             listening = false;
