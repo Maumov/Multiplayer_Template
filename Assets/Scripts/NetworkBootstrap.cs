@@ -14,6 +14,7 @@ public class NetworkBootstrap : MonoBehaviour
 
     void Start()
     {
+        
         if ( CommandLineArgs.Has( "-server" ) )
             StartDedicatedServer();
     }
@@ -54,7 +55,8 @@ public class NetworkBootstrap : MonoBehaviour
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         transport.SetConnectionData( ip, 7777 );
 
-        NetworkManager.Singleton.StartClient();
+        bool clientStarted = NetworkManager.Singleton.StartClient();
+        ToastMessage.instance.ShowMessage( $"Client started: {clientStarted} ");
         Debug.Log( "[BOOT] Client → " + ip );
     }
 }
