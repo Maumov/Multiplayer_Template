@@ -27,12 +27,17 @@ public class NetworkBootstrap : MonoBehaviour
     public void StartHost()
     {
         NetworkManager.Singleton.StartHost();
-        Instantiate( serverRulesPrefab );
         Debug.Log( "[BOOT] Host" );
+        
+        NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+    }
+
+    private void OnServerStarted()
+    {
+        NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
         string escena = "1_Game";
         NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
     }
-
     public void StartClient( string ip )
     {
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
