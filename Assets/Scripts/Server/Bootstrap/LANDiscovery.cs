@@ -19,13 +19,40 @@ namespace Assets.Scripts.Server.Bootstrap
         UdpClient sender;
         UdpClient listener;
         float timer;
+        bool listening;
 
+        void Awake()
+        {
+            StartListener();
+        }
+        void StartListener()
+        {
+            try
+            {
+                listener = new UdpClient();
+
+                listener.Client.SetSocketOption( SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true );
+                listener.ExclusiveAddressUse = false;
+                listener.Client.Bind( new IPEndPoint( IPAddress.Any, port ) );
+
+                listener.BeginReceive( OnReceive, null );
+                listening = true;
+
+                Debug.Log( "[LANDiscovery] Listening on UDP " + port );
+            }
+            catch ( Exception e )
+            {
+                Debug.LogError( "[LANDiscovery] Listener failed: " + e.Message );
+            }
+        }
+
+        /*
         void Start()
         {
             listener = new UdpClient( port );
             listener.BeginReceive( OnReceive, null );
         }
-
+        */
         void Update()
         {
             if ( !NetworkManager.Singleton.IsServer )
@@ -55,13 +82,29 @@ namespace Assets.Scripts.Server.Bootstrap
 
         void OnReceive( IAsyncResult ar )
         {
-            IPEndPoint ep = new IPEndPoint( IPAddress.Any, 0 );
-            byte[] data = listener.EndReceive( ar, ref ep );
+            if ( !listening )
+                return;
 
-            if ( Encoding.UTF8.GetString( data ) == broadcastMsg )
-                OnServerFound?.Invoke( ep.Address.ToString() );
+            try
+            {
+                IPEndPoint ep = new IPEndPoint( IPAddress.Any, 0 );
+                byte[] data = listener.EndReceive( ar, ref ep );
 
-            listener.BeginReceive( OnReceive, null );
+                string msg = Encoding.UTF8.GetString( data );
+                if ( msg == broadcastMsg )
+                {
+                    OnServerFound?.Invoke( ep.Address.ToString() );
+                    Debug.Log( "[LANDiscovery] Server found: " + ep.Address );
+                }
+            }
+            catch ( SocketException )
+            {
+                // ignorar errores UDP normales
+            }
+            finally
+            {
+                listener.BeginReceive( OnReceive, null );
+            }
         }
 
         IPAddress[] GetBroadcastIPs()
@@ -78,11 +121,11 @@ namespace Assets.Scripts.Server.Bootstrap
             }
             return list.ToArray();
         }
-
         void OnDestroy()
         {
-            sender?.Close();
+            listening = false;
             listener?.Close();
+            sender?.Close();
         }
     }
 }
