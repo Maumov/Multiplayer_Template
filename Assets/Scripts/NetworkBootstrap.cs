@@ -61,7 +61,12 @@ public class NetworkBootstrap : MonoBehaviour
 
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         transport.SetConnectionData( ip, 7777 );
-
+        var nm = NetworkManager.Singleton;
+        Debug.Log( $"IsClient={nm.IsClient}" );
+        Debug.Log( $"IsServer={nm.IsServer}" );
+        Debug.Log( $"IsListening={nm.IsListening}" );
+        Debug.Log( $"NM enabled={nm.isActiveAndEnabled}" );
+        Debug.Log( $"NM count={FindObjectsOfType<NetworkManager>().Length}" );
         NetworkManager.Singleton.OnClientStarted += OnClientStarted;
         clientStartedSuccesfully = NetworkManager.Singleton.StartClient();
         
