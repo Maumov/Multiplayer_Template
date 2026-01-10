@@ -53,6 +53,8 @@ public class NetworkBootstrap : MonoBehaviour
             NetworkManager.Singleton.Shutdown();
         }
     }
+
+    bool clientStartedSuccesfully;
     public void StartClient( string ip )
     {
         EnsureNetworkStopped();
@@ -60,8 +62,15 @@ public class NetworkBootstrap : MonoBehaviour
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         transport.SetConnectionData( ip, 7777 );
 
-        bool clientStarted = NetworkManager.Singleton.StartClient();
-        ToastMessage.instance.ShowMessage( $"Client started: {clientStarted} ");
-        Debug.Log( "[BOOT] Client → " + ip );
+        NetworkManager.Singleton.OnClientStarted += OnClientStarted;
+        clientStartedSuccesfully = NetworkManager.Singleton.StartClient();
+        
     }
+
+    private void OnClientStarted()
+    {
+        ToastMessage.instance.ShowMessage( $"Client started {clientStartedSuccesfully}" );
+        Debug.Log( "[BOOT] Client → asd");
+    }
+
 }
