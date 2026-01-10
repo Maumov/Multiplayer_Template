@@ -10,138 +10,79 @@ namespace Assets.Scripts.Server.Bootstrap
 {
     public class LANDiscovery : MonoBehaviour
     {
-        public static LANDiscovery Instance;
+        public int port = 47777;
+        public float interval = 1f;
+        public string broadcastMsg = "UNITY_LAN_SERVER";
 
-        [Header( "Discovery Settings" )]
-        [SerializeField] int broadcastPort = 47777;
-        [SerializeField] float broadcastInterval = 1.5f;
-        [SerializeField] string broadcastMessage = "UNITY_LAN_SERVER";
+        public Action<string> OnServerFound;
 
-        public event Action<string> OnServerFound;
-
-        UdpClient udp;
+        UdpClient sender;
+        UdpClient listener;
         float timer;
-
-        readonly HashSet<string> discoveredServers = new HashSet<string>();
-
-        void Awake()
-        {
-            if ( Instance != null )
-            {
-                Destroy( gameObject );
-                return;
-            }
-
-            Instance = this;
-            DontDestroyOnLoad( gameObject );
-        }
 
         void Start()
         {
-            //StartUDP();
+            listener = new UdpClient( port );
+            listener.BeginReceive( OnReceive, null );
         }
 
-        public void StartUDP()
+        void Update()
         {
-            try
+            if ( !NetworkManager.Singleton.IsServer )
+                return;
+
+            if ( sender == null )
             {
-                udp = new UdpClient( broadcastPort );
-                udp.EnableBroadcast = true;
-
-                // ⚠️ MUY IMPORTANTE EN WINDOWS
-                udp.Client.SetSocketOption(
-                    SocketOptionLevel.Socket,
-                    SocketOptionName.ReuseAddress,
-                    true );
-
-                BeginReceive();
-
-                Debug.Log( $"[LANDiscovery] UDP listening on {broadcastPort}" );
+                sender = new UdpClient();
+                sender.EnableBroadcast = true;
             }
-            catch ( Exception e )
+
+            timer += Time.deltaTime;
+            if ( timer >= interval )
             {
-                Debug.LogError( "[LANDiscovery] UDP init failed: " + e );
+                Broadcast();
+                timer = 0;
             }
         }
 
-        void BeginReceive()
+        void Broadcast()
         {
-            try
-            {
-                udp.BeginReceive( OnReceive, null );
-            }
-            catch
-            {
-                // Socket cerrado
-            }
+            byte[] data = Encoding.UTF8.GetBytes( broadcastMsg );
+
+            foreach ( var ip in GetBroadcastIPs() )
+                sender.Send( data, data.Length, new IPEndPoint( ip, port ) );
         }
 
         void OnReceive( IAsyncResult ar )
         {
             IPEndPoint ep = new IPEndPoint( IPAddress.Any, 0 );
-            byte[] data;
+            byte[] data = listener.EndReceive( ar, ref ep );
 
-            try
-            {
-                data = udp.EndReceive( ar, ref ep );
-            }
-            catch
-            {
-                return;
-            }
+            if ( Encoding.UTF8.GetString( data ) == broadcastMsg )
+                OnServerFound?.Invoke( ep.Address.ToString() );
 
-            string msg = Encoding.UTF8.GetString( data );
-
-            if ( msg == broadcastMessage )
-            {
-                string serverIP = ep.Address.ToString();
-
-                if ( discoveredServers.Add( serverIP ) )
-                {
-                    Debug.Log( "[LANDiscovery] Server found: " + serverIP );
-                    OnServerFound?.Invoke( serverIP );
-                }
-            }
-
-            BeginReceive(); // 🔁 seguir escuchando
+            listener.BeginReceive( OnReceive, null );
         }
 
-        void Update()
+        IPAddress[] GetBroadcastIPs()
         {
-            // Servidor (host o dedicado) → broadcast
-            if ( NetworkManager.Singleton != null &&
-                NetworkManager.Singleton.IsServer )
+            var list = new System.Collections.Generic.List<IPAddress>();
+            foreach ( var ip in Dns.GetHostEntry( Dns.GetHostName() ).AddressList )
             {
-                timer += Time.deltaTime;
-                if ( timer >= broadcastInterval )
+                if ( ip.AddressFamily == AddressFamily.InterNetwork )
                 {
-                    BroadcastServer();
-                    timer = 0f;
+                    var b = ip.GetAddressBytes();
+                    b[ 3 ] = 255;
+                    list.Add( new IPAddress( b ) );
                 }
             }
-        }
-
-        void BroadcastServer()
-        {
-            try
-            {
-                byte[] data = Encoding.UTF8.GetBytes( broadcastMessage );
-                IPEndPoint ep = new IPEndPoint( IPAddress.Broadcast, broadcastPort );
-                udp.Send( data, data.Length, ep );
-            }
-            catch
-            {
-                // Ignorar errores UDP normales
-            }
+            return list.ToArray();
         }
 
         void OnDestroy()
         {
-            try
-            {
-                udp?.Close();
-            }
-            catch { }
+            sender?.Close();
+            listener?.Close();
         }
     }
 }

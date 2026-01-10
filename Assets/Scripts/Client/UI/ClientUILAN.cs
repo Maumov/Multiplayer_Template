@@ -18,52 +18,52 @@ namespace Assets.Scripts.Client.UI
 
         private string selectedServerIP = "";
 
-        void Start()
-        {
-            hostButton.onClick.AddListener( StartHost );
-            joinButton.onClick.AddListener( JoinServer );
+        //void Start()
+        //{
+        //    hostButton.onClick.AddListener( StartHost );
+        //    joinButton.onClick.AddListener( JoinServer );
 
-            // Inicia discovery
-            LANDiscovery.Instance.OnServerFound += OnServerFound;
-            LANDiscovery.Instance.StartUDP();
-        }
+        //    // Inicia discovery
+        //    LANDiscovery.Instance.OnServerFound += OnServerFound;
+        //    LANDiscovery.Instance.StartUDP();
+        //}
 
-        void OnDestroy()
-        {
-            LANDiscovery.Instance.OnServerFound -= OnServerFound;
-        }
+        //void OnDestroy()
+        //{
+        //    LANDiscovery.Instance.OnServerFound -= OnServerFound;
+        //}
 
-        private void OnServerFound( string serverIP )
-        {
-            // Crear botón para cada servidor detectado
-            GameObject entry = Instantiate( serverEntryPrefab, serverListContent );
-            Button b = entry.GetComponent<Button>();
-            b.GetComponentInChildren<Text>().text = serverIP;
+        //private void OnServerFound( string serverIP )
+        //{
+        //    // Crear botón para cada servidor detectado
+        //    GameObject entry = Instantiate( serverEntryPrefab, serverListContent );
+        //    Button b = entry.GetComponent<Button>();
+        //    b.GetComponentInChildren<Text>().text = serverIP;
 
-            b.onClick.AddListener( () =>
-            {
-                selectedServerIP = serverIP;
-            } );
-        }
+        //    b.onClick.AddListener( () =>
+        //    {
+        //        selectedServerIP = serverIP;
+        //    } );
+        //}
 
-        private void StartHost()
-        {
-            Debug.Log( "[UI] Starting Host" );
-            NetworkManager.Singleton.StartHost();
-        }
+        //private void StartHost()
+        //{
+        //    Debug.Log( "[UI] Starting Host" );
+        //    NetworkManager.Singleton.StartHost();
+        //}
 
-        private void JoinServer()
-        {
-            if ( string.IsNullOrEmpty( selectedServerIP ) )
-            {
-                Debug.LogWarning( "No server selected!" );
-                return;
-            }
+        //private void JoinServer()
+        //{
+        //    if ( string.IsNullOrEmpty( selectedServerIP ) )
+        //    {
+        //        Debug.LogWarning( "No server selected!" );
+        //        return;
+        //    }
 
-            Debug.Log( $"[UI] Connecting to server {selectedServerIP}" );
-            var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-            transport.ConnectionData.Address = selectedServerIP;
-            NetworkManager.Singleton.StartClient();
-        }
+        //    Debug.Log( $"[UI] Connecting to server {selectedServerIP}" );
+        //    var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        //    transport.ConnectionData.Address = selectedServerIP;
+        //    NetworkManager.Singleton.StartClient();
+        //}
     }
 }
