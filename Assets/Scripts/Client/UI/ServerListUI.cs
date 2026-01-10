@@ -22,8 +22,6 @@ public class ServerListUI : MonoBehaviour
         if ( knownServers.Contains( ip ) )
             return;
 
-        Debug.Log( "Prefab: " + serverEntryPrefab );
-        Debug.Log( "ContentParent: " + contentParent );
         knownServers.Add( ip );
         try
         {

@@ -25,20 +25,25 @@ public class NetworkBootstrap : MonoBehaviour
         Debug.Log( "[BOOT] Dedicated Server" );
     }
 
+    bool hostStartedSuccesfully;
     public void StartHost()
     {
         EnsureNetworkStopped();
 
-        NetworkManager.Singleton.StartHost();
-        Debug.Log( "[BOOT] Host" );
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+        
+        hostStartedSuccesfully = NetworkManager.Singleton.StartHost();
+        Debug.Log( "[BOOT] Host" );
+        
     }
 
     private void OnServerStarted()
     {
+        ToastMessage.instance.ShowMessage( $"Host started {hostStartedSuccesfully}" );
         NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
         string escena = "1_Game";
         NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
+        
     }
     void EnsureNetworkStopped()
     {
