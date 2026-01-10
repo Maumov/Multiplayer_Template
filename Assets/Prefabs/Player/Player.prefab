@@ -95,6 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b85b4e5b9eca1742829fe57f17dc553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnCharacter: 32
+  attack: 49
 --- !u!114 &1732856352051902068
 MonoBehaviour:
   m_ObjectHideFlags: 0

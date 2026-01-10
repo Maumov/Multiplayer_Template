@@ -22,17 +22,22 @@ namespace Client.Player
             if ( spawnPoint == null )
                 spawnPoint = transform; // fallback
 
-            SpawnCharacter();
-
         }
 
-        void SpawnCharacter()
+        public void SpawnCharacter()
         {
-            if( characterInstance == null ) return;
+            if ( !IsOwner )
+                return;
+
+            if ( characterPrefab == null )
+                return;
+
+            if ( characterInstance != null ) 
+                return;
 
             // Instancia local
-            characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
-            characterInstance.transform.SetParent( spawnPoint, true );
+            //characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
+            //characterInstance.transform.SetParent( spawnPoint, true );
 
             // Spawn en la red
             var netObj = characterInstance.GetComponent<NetworkObject>();

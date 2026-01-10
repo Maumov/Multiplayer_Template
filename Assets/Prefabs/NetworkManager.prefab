@@ -127,3 +127,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cec1d079da7b7d44ea46b68afb4456ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serverRulesPrefab: {fileID: 8938189419269305773, guid: 3a6a7e1c089789941ab379cd6f1177f9,
+    type: 3}

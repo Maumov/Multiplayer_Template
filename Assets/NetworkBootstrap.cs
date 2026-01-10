@@ -1,12 +1,12 @@
 ﻿using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class NetworkBootstrap : MonoBehaviour
 {
     public static NetworkBootstrap Instance;
 
+    public GameObject serverRulesPrefab;
     void Awake()
     {
         Instance = this;
@@ -21,15 +21,16 @@ public class NetworkBootstrap : MonoBehaviour
     public void StartDedicatedServer()
     {
         NetworkManager.Singleton.StartServer();
-        SceneManager.LoadScene( "1_Game" );
         Debug.Log( "[BOOT] Dedicated Server" );
     }
 
     public void StartHost()
     {
         NetworkManager.Singleton.StartHost();
-        SceneManager.LoadScene( "1_Game" );
+        Instantiate( serverRulesPrefab );
         Debug.Log( "[BOOT] Host" );
+        string escena = "1_Game";
+        NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
     }
 
     public void StartClient( string ip )
@@ -38,7 +39,6 @@ public class NetworkBootstrap : MonoBehaviour
         transport.SetConnectionData( ip, 7777 );
 
         NetworkManager.Singleton.StartClient();
-        SceneManager.LoadScene( "1_Game" );
         Debug.Log( "[BOOT] Client → " + ip );
     }
 }
