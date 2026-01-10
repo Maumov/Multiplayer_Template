@@ -26,9 +26,10 @@ public class NetworkBootstrap : MonoBehaviour
 
     public void StartHost()
     {
+        EnsureNetworkStopped();
+
         NetworkManager.Singleton.StartHost();
         Debug.Log( "[BOOT] Host" );
-        
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
     }
 
@@ -38,8 +39,18 @@ public class NetworkBootstrap : MonoBehaviour
         string escena = "1_Game";
         NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
     }
+    void EnsureNetworkStopped()
+    {
+        if ( NetworkManager.Singleton.IsListening )
+        {
+            Debug.Log( "[NET] Shutting down existing session" );
+            NetworkManager.Singleton.Shutdown();
+        }
+    }
     public void StartClient( string ip )
     {
+        EnsureNetworkStopped();
+
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         transport.SetConnectionData( ip, 7777 );
 

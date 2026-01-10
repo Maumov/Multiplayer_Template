@@ -136,11 +136,6 @@ namespace Assets.Scripts.Server.Bootstrap
                 listener.BeginReceive( OnReceive, null );
             }
         }
-        void HandleServerFound( IPAddress ip )
-        {
-            // Almacena en una lista de servers pendientes
-            pendingServers.Add( ip.ToString() );
-        }
 
         IPAddress[] GetBroadcastIPs()
         {
