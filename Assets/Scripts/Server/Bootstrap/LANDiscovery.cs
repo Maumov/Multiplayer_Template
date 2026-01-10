@@ -21,6 +21,7 @@ namespace Assets.Scripts.Server.Bootstrap
         UdpClient listener;
         float timer;
         bool listening;
+        private List<string> pendingServers = new List<string>();
 
         void Awake()
         {
@@ -66,20 +67,33 @@ namespace Assets.Scripts.Server.Bootstrap
         */
         void Update()
         {
+
+
             if ( !NetworkManager.Singleton.IsServer )
-                return;
-
-            if ( sender == null )
             {
-                sender = new UdpClient();
-                sender.EnableBroadcast = true;
+                if ( pendingServers.Count > 0 )
+                {
+                    foreach ( var ip in pendingServers )
+                    {
+                        OnServerFound?.Invoke( ip ); // ahora corre en thread principal
+                    }
+                    pendingServers.Clear();
+                }
             }
-
-            timer += Time.deltaTime;
-            if ( timer >= interval )
+            else
             {
-                Broadcast();
-                timer = 0;
+                if ( sender == null )
+                {
+                    sender = new UdpClient();
+                    sender.EnableBroadcast = true;
+                }
+
+                timer += Time.deltaTime;
+                if ( timer >= interval )
+                {
+                    Broadcast();
+                    timer = 0;
+                }
             }
         }
 
@@ -105,12 +119,11 @@ namespace Assets.Scripts.Server.Bootstrap
                 if ( msg == broadcastMsg )
                 {
                     string ip = ep.Address.ToString();
-
+                    /*
                     if ( ip == localIP )
                         return; // ignora self
-
-
-                    OnServerFound?.Invoke( ep.Address.ToString() );
+                    */
+                    pendingServers.Add( ip ); // solo agrega a la lista
                     Debug.Log( "[LANDiscovery] Server found: " + ep.Address );
                 }
             }
@@ -122,6 +135,11 @@ namespace Assets.Scripts.Server.Bootstrap
             {
                 listener.BeginReceive( OnReceive, null );
             }
+        }
+        void HandleServerFound( IPAddress ip )
+        {
+            // Almacena en una lista de servers pendientes
+            pendingServers.Add( ip.ToString() );
         }
 
         IPAddress[] GetBroadcastIPs()

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2176053808678430811}
   - component: {fileID: 4085360917142464905}
   - component: {fileID: 7825789357773082381}
+  - component: {fileID: 1889342729285092233}
   m_Layer: 5
   m_Name: ServerList-ServerOptionButton
   m_TagString: Untagged
@@ -120,7 +121,32 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4085360917142464905}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1889342729285092233}
+        m_TargetAssemblyTypeName: ServerEntry, Assembly-CSharp
+        m_MethodName: Connect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1889342729285092233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000021296266706376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45718670b97aa3d458580d775825e143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  label: {fileID: 6507672688738006502}
 --- !u!1 &7886440062353844597
 GameObject:
   m_ObjectHideFlags: 0

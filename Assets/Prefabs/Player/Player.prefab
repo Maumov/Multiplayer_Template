@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8221971348187774338}
   - component: {fileID: -5439632677560112894}
+  - component: {fileID: -7593751991512065429}
   - component: {fileID: -4744925178793417826}
   - component: {fileID: 1058350118604654488}
   - component: {fileID: 1732856352051902068}
@@ -49,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1034590379
+  GlobalObjectIdHash: 3827527762
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -58,6 +59,18 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-7593751991512065429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1558474236823421590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb545a42a03761645a97bdc289f51254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-4744925178793417826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,6 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4267005637cbe4c459e0452d3ffb097c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health:
+    m_InternalValue: 100
   characterPrefab: {fileID: 2293571680899113747, guid: ba2ba8245b373dc449f4f09fd6d8fb47,
     type: 3}
   spawnPoint: {fileID: 153092392298375068}
