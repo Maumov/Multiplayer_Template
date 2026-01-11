@@ -15,11 +15,29 @@ namespace Client.Player
         private GameObject characterInstance;
         private TargetFinder targetFinder;
 
+        public NetworkVariable<ulong> CharacterNetId = new( 0 );
+
         public Transform spawnPoint; // opcional, referencia al CharacterSpawnPoint
 
         public delegate void PlayerControllerDelegate();
         public event PlayerControllerDelegate OnHealthChange;
 
+        public override void OnNetworkSpawn()
+        {
+            // Esto se ejecuta en clientes y host
+            CharacterNetId.OnValueChanged += OnCharacterAssigned;
+
+            // Si ya hay un valor (late joiner), asignamos referencia
+            if ( CharacterNetId.Value != 0 )
+                OnCharacterAssigned( 0, CharacterNetId.Value );
+        }
+        private void OnCharacterAssigned( ulong oldId, ulong newId )
+        {
+            if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
+            {
+                characterInstance = netObj.gameObject;
+            }
+        }
 
         void Start()
         {
@@ -53,14 +71,14 @@ namespace Client.Player
                 return; // Extra seguridad
 
             // Instanciamos el personaje
-            characterInstance = Instantiate( characterPrefab, spawnPosition, Quaternion.identity );
-            var netObj = characterInstance.GetComponent<NetworkObject>();
+            var go = Instantiate( characterPrefab, spawnPosition, Quaternion.identity );
+            var netObj = go.GetComponent<NetworkObject>();
 
             // Damos ownership al jugador
             netObj.SpawnWithOwnership( OwnerClientId );
-            characterInstance = netObj.gameObject;
+            
             // Guardamos el NetworkObjectId para referencia futura
-            //CharacterNetId.Value = netObj.NetworkObjectId;
+            CharacterNetId.Value = netObj.NetworkObjectId;
         }
 
         public void TakeDamage( int damage )
