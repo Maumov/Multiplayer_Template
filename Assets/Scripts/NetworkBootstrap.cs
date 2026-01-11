@@ -55,8 +55,8 @@ public class NetworkBootstrap : MonoBehaviour
         ToastMessage.instance.ShowMessage( $"Host started {hostStartedSuccesfully}" );
         NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
         
-        //string escena = "1_Game";
-        //NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
+        string escena = "1_Game";
+        NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
         
     }
     void EnsureNetworkStopped()
