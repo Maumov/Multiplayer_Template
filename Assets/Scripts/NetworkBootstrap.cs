@@ -31,16 +31,17 @@ public class NetworkBootstrap : MonoBehaviour
         EnsureNetworkStopped();
 
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+        /*
         var nm = NetworkManager.Singleton;
 
         var utp = ( UnityTransport ) nm.NetworkConfig.NetworkTransport;
-
+        
         // FORZAR bind LAN
         utp.SetConnectionData(
             "0.0.0.0",   // escuchar en todas las interfaces
             7778
         );
-
+        */
         // OPCIONAL pero recomendado
         //utp.Protocol = UnityTransport.ProtocolType.UDP;
 
