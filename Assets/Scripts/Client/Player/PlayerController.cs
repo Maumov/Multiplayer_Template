@@ -42,30 +42,10 @@ namespace Client.Player
             if ( characterInstance != null ) 
                 return;
 
-            /*
-            // Instancia local
-            characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
-            characterInstance.transform.SetParent( spawnPoint, true );
-
-            // Spawn en la red
-            var netObj = characterInstance.GetComponent<NetworkObject>();
-            if ( netObj != null )
-            {
-                // OwnerClientId = cliente dueño
-                netObj.SpawnWithOwnership( OwnerClientId );
-                targetFinder = characterInstance.GetComponent<TargetFinder>();
-            }
-            */
-
-            /*
-            // Si el personaje tiene cámara, activa solo para el owner
-            var cam = characterInstance.GetComponentInChildren<Camera>();
-            if ( cam )
-                cam.enabled = IsOwner;
-            */
             Vector3 spawnPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
             SpawnCharacterServerRpc( spawnPosition );
         }
+
         [ServerRpc]
         void SpawnCharacterServerRpc( Vector3 spawnPosition )
         {
@@ -78,7 +58,7 @@ namespace Client.Player
 
             // Damos ownership al jugador
             netObj.SpawnWithOwnership( OwnerClientId );
-
+            characterInstance = netObj.gameObject;
             // Guardamos el NetworkObjectId para referencia futura
             //CharacterNetId.Value = netObj.NetworkObjectId;
         }
