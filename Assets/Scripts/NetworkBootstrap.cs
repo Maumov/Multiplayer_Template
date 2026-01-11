@@ -41,8 +41,9 @@ public class NetworkBootstrap : MonoBehaviour
     {
         ToastMessage.instance.ShowMessage( $"Host started {hostStartedSuccesfully}" );
         NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
-        string escena = "1_Game";
-        NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
+        
+        //string escena = "1_Game";
+        //NetworkManager.Singleton.SceneManager.LoadScene( $"{escena}", UnityEngine.SceneManagement.LoadSceneMode.Single );
         
     }
     void EnsureNetworkStopped()
@@ -50,23 +51,27 @@ public class NetworkBootstrap : MonoBehaviour
         if ( NetworkManager.Singleton.IsListening )
         {
             Debug.Log( "[NET] Shutting down existing session" );
-            NetworkManager.Singleton.Shutdown();
+            //NetworkManager.Singleton.Shutdown();
         }
     }
 
     bool clientStartedSuccesfully;
+    string ipHost;
     public void StartClient( string ip )
     {
         EnsureNetworkStopped();
 
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         transport.SetConnectionData( ip, 7777 );
+        ipHost = ip.ToLower();
         var nm = NetworkManager.Singleton;
         Debug.Log( $"IsClient={nm.IsClient}" );
         Debug.Log( $"IsServer={nm.IsServer}" );
         Debug.Log( $"IsListening={nm.IsListening}" );
         Debug.Log( $"NM enabled={nm.isActiveAndEnabled}" );
         Debug.Log( $"NM count={FindObjectsOfType<NetworkManager>().Length}" );
+        Debug.Log( $"NM comparing UnityTransports={transport == GetComponent<UnityTransport>()}" );
+        
         NetworkManager.Singleton.OnClientStarted += OnClientStarted;
         clientStartedSuccesfully = NetworkManager.Singleton.StartClient();
         
@@ -74,7 +79,7 @@ public class NetworkBootstrap : MonoBehaviour
 
     private void OnClientStarted()
     {
-        ToastMessage.instance.ShowMessage( $"Client started {clientStartedSuccesfully}" );
+        ToastMessage.instance.ShowMessage( $"Client started {clientStartedSuccesfully} + {ipHost}" );
         Debug.Log( "[BOOT] Client → asd");
     }
 
