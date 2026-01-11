@@ -61,8 +61,9 @@ public class NetworkBootstrap : MonoBehaviour
     {
         EnsureNetworkStopped();
 
-        var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        transport.SetConnectionData( ip, 7777 );
+        NetworkManager ins = NetworkManager.Singleton;
+        var transport = (UnityTransport)ins.NetworkConfig.NetworkTransport;
+        transport.SetConnectionData( ip, 7778 );
         ipHost = ip.ToLower();
         var nm = NetworkManager.Singleton;
         Debug.Log( $"IsClient={nm.IsClient}" );
