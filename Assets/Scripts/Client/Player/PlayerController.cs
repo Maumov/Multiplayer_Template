@@ -61,11 +61,26 @@ namespace Client.Player
             if ( cam )
                 cam.enabled = IsOwner;
             */
+            Vector3 spawnPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
+            SpawnCharacterServerRpc( spawnPosition );
+        }
+        [ServerRpc]
+        void SpawnCharacterServerRpc( Vector3 spawnPosition )
+        {
+            if ( !IsServer )
+                return; // Extra seguridad
+
+            // Instanciamos el personaje
+            characterInstance = Instantiate( characterPrefab, spawnPosition, Quaternion.identity );
+            var netObj = characterInstance.GetComponent<NetworkObject>();
+
+            // Damos ownership al jugador
+            netObj.SpawnWithOwnership( OwnerClientId );
+
+            // Guardamos el NetworkObjectId para referencia futura
+            //CharacterNetId.Value = netObj.NetworkObjectId;
         }
 
-        // Métodos de PlayerPrefab que no necesitan ser visibles
-        
-        
         public void TakeDamage( int damage )
         {
             if ( !IsServer )
