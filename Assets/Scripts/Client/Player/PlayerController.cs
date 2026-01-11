@@ -1,3 +1,5 @@
+using Shared.Combat;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,8 +13,13 @@ namespace Client.Player
         [Header( "Character" )]
         public GameObject characterPrefab; // prefab visual / jugable
         private GameObject characterInstance;
+        private TargetFinder targetFinder;
 
         public Transform spawnPoint; // opcional, referencia al CharacterSpawnPoint
+
+        public delegate void PlayerControllerDelegate();
+        public event PlayerControllerDelegate OnHealthChange;
+
 
         void Start()
         {
@@ -36,8 +43,8 @@ namespace Client.Player
                 return;
 
             // Instancia local
-            //characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
-            //characterInstance.transform.SetParent( spawnPoint, true );
+            characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
+            characterInstance.transform.SetParent( spawnPoint, true );
 
             // Spawn en la red
             var netObj = characterInstance.GetComponent<NetworkObject>();
@@ -45,26 +52,52 @@ namespace Client.Player
             {
                 // OwnerClientId = cliente dueño
                 netObj.SpawnWithOwnership( OwnerClientId );
+                targetFinder = characterInstance.GetComponent<TargetFinder>();
             }
 
-
+            /*
             // Si el personaje tiene cámara, activa solo para el owner
             var cam = characterInstance.GetComponentInChildren<Camera>();
             if ( cam )
                 cam.enabled = IsOwner;
+            */
         }
 
         // Métodos de PlayerPrefab que no necesitan ser visibles
-        [ServerRpc]
-        public void TakeDamageServerRpc( int damage )
+        
+        
+        public void TakeDamage( int damage )
         {
             if ( !IsServer )
                 return;
             health.Value -= damage;
+            OnHealthChange?.Invoke();
             if ( health.Value <= 0 )
             {
                 // Lógica muerte
             }
+        }
+        
+        public void Move()
+        {
+            if ( characterInstance == null)
+                return;
+
+            characterInstance.transform.position = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
+        }
+
+        public void RequestAttack()
+        {
+            List<ulong> targets = targetFinder.GetTarget();
+            ulong targetId = targets[ 0 ];
+            RequestAttackServerRpc( targetId );
+        }
+
+        [ServerRpc]
+        private void RequestAttackServerRpc( ulong target)
+        {
+            // NO lógica aquí
+            Server.Player.ServerPlayerActions.HandleAttack( OwnerClientId, target );
         }
     }
 }

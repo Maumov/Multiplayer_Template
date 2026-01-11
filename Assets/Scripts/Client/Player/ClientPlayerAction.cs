@@ -5,19 +5,18 @@ namespace Client.Player
 {
     public class ClientPlayerActions : NetworkBehaviour
     {
+        PlayerController controller;
+
+        private void Start()
+        {
+            controller = GetComponent<PlayerController>();
+        }
         public void RequestAttack()
         {
             if ( !IsOwner )
                 return;
 
-            RequestAttackServerRpc();
-        }
-
-        [ServerRpc]
-        private void RequestAttackServerRpc()
-        {
-            // NO lógica aquí
-            Server.Player.ServerPlayerActions.HandleAttack( OwnerClientId );
+            controller.RequestAttack();
         }
 
         public void RequestMove()
@@ -25,15 +24,17 @@ namespace Client.Player
             if ( !IsOwner )
                 return;
 
-            RequestMoveServerRpc();
+            controller.Move();
+            //RequestMoveServerRpc();
         }
-
+        
+        /*
         [ServerRpc]
         private void RequestMoveServerRpc()
         {
             // NO lógica Esto funciona porque el PlayerPrefab tiene un NetworkTransform
             transform.position = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
         }
-        
+        */
     }
 }

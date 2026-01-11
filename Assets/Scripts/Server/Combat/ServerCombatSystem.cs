@@ -1,9 +1,12 @@
 using Shared.Combat;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Server.Combat
 {
-    public class ServerCombatSystem : MonoBehaviour
+    public class ServerCombatSystem : NetworkBehaviour
     {
         public static ServerCombatSystem Instance;
 
@@ -12,21 +15,37 @@ namespace Server.Combat
             Instance = this;
         }
 
-        public void ProcessAttack( ulong attackerId )
+        public void ProcessAttack( ulong attackerId, ulong target )
         {
-            // Ejemplo: buscar objetivo
-            IDamageable target = FindTarget( attackerId );
-            if ( target == null )
+            if ( !IsServer )
                 return;
 
+            // Ejemplo: buscar objetivo
+            //IDamageable target = FindTarget( attackerId );
+            /*
+            if ( target.Count <= 0)
+                return;
+
+            IDamageable target = targets[ 0 ];
+            if ( target == null )
+                return;
+            */
+            if ( !NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( target, out var targetNetObj ) )
+                return;
+
+            //target
+            IDamageable damageable = targetNetObj.GetComponent<IDamageable>();
+
+            //Damage data.
             DamageData data = new DamageData
             {
                 BaseDamage = 25,
-                CriticalChance = 0.2f
+                CriticalChance = 0.0f
             };
-
             DamageResult result = DamageCalculator.Calculate( data );
-            target.ApplyDamage( result );
+
+            //Apply damage
+            damageable.ApplyDamage( result );
         }
 
         private IDamageable FindTarget( ulong attackerId )
