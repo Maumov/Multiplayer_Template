@@ -17,6 +17,6 @@ public class CheckGameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        text.text = $"{gameManager.MatchTime}";
+        text.text = $"{gameManager.MatchTime.Value}";
     }
 }
