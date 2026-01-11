@@ -42,6 +42,7 @@ namespace Client.Player
             if ( characterInstance != null ) 
                 return;
 
+            /*
             // Instancia local
             characterInstance = Instantiate( characterPrefab, spawnPoint.position, spawnPoint.rotation );
             characterInstance.transform.SetParent( spawnPoint, true );
@@ -54,6 +55,7 @@ namespace Client.Player
                 netObj.SpawnWithOwnership( OwnerClientId );
                 targetFinder = characterInstance.GetComponent<TargetFinder>();
             }
+            */
 
             /*
             // Si el personaje tiene cámara, activa solo para el owner
