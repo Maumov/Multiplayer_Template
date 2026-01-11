@@ -10,6 +10,8 @@ namespace Client.Player
         private PlayerController networkHandler;
         public KeyCode spawnCharacter;
         public KeyCode attack;
+        public KeyCode move;
+
         void Awake()
         {
             actions = GetComponent<ClientPlayerActions>();
@@ -22,6 +24,11 @@ namespace Client.Player
             {
                 Debug.Log( "RequestAttack" );
                 actions.RequestAttack();
+            }
+            if ( Input.GetKeyDown( move ) )
+            {
+                Debug.Log( "RequestMove" );
+                actions.RequestMove();
             }
             if ( Input.GetKeyDown( spawnCharacter ) )
             {
