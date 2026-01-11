@@ -8,7 +8,7 @@ public class PlayerNetworkHandler : NetworkBehaviour
         // Solo para el objeto local
         if ( IsOwner )
         {
-           // DontDestroyOnLoad( gameObject ); // mantiene este player al cambiar de escena
+           DontDestroyOnLoad( gameObject ); // mantiene este player al cambiar de escena
         }
     }
 }
