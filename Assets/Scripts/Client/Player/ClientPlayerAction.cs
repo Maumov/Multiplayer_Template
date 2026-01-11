@@ -31,7 +31,7 @@ namespace Client.Player
         [ServerRpc]
         private void RequestMoveServerRpc()
         {
-            // NO lógica aquí
+            // NO lógica Esto funciona porque el PlayerPrefab tiene un NetworkTransform
             transform.position = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
         }
         
