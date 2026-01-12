@@ -21,17 +21,6 @@ namespace Server.Combat
             if ( !IsServer )
                 return;
 
-            // Ejemplo: buscar objetivo
-            //IDamageable target = FindTarget( attackerId );
-            /*
-            if ( target.Count <= 0)
-                return;
-
-            IDamageable target = targets[ 0 ];
-            if ( target == null )
-                return;
-            */
-
             Debug.Log( $"Finding Id" );
             if ( !NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( target, out var targetNetObj ) )
             {
