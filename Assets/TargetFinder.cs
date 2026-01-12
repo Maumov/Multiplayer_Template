@@ -21,7 +21,7 @@ public class TargetFinder : MonoBehaviour
             IDamageable damageable = colliders[i].GetComponentInParent<IDamageable>();
             if ( damageable != null )
             {
-                ulong targetId = colliders[i].GetComponent<NetworkObject>().NetworkObjectId;
+                ulong targetId = colliders[i].GetComponentInParent<NetworkObject>().NetworkObjectId;
                 targets.Add( targetId );
             }
         }
