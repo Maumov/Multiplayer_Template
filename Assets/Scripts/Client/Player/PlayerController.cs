@@ -29,6 +29,11 @@ namespace Client.Player
 
         public override void OnNetworkSpawn()
         {
+            if ( IsOwner )
+            {
+                DontDestroyOnLoad( gameObject ); // mantiene este player al cambiar de escena
+            }
+
             // Se ejecuta en host y clientes
             CharacterNetId.OnValueChanged += OnCharacterAssigned;
 

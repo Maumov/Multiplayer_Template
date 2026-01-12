@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8221971348187774338}
   - component: {fileID: -5439632677560112894}
-  - component: {fileID: -7593751991512065429}
   - component: {fileID: -4744925178793417826}
   - component: {fileID: 1058350118604654488}
   - component: {fileID: 1732856352051902068}
@@ -59,18 +58,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-7593751991512065429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1558474236823421590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb545a42a03761645a97bdc289f51254, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-4744925178793417826
 MonoBehaviour:
   m_ObjectHideFlags: 0

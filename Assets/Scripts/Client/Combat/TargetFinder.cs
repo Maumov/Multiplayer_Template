@@ -25,10 +25,13 @@ public class TargetFinder : MonoBehaviour
                 targets.Add( targetId );
             }
         }
-
+        Debug.Log( $"targets found: {targets.Count}" );
         //Remove self;
         ulong self = transform.GetComponentInParent<NetworkObject>().NetworkObjectId;
+        Debug.Log( $" targets contains me: {targets.Contains( self )}" );
+        Debug.Log( $"My id: {self}" );
         targets.Remove( self );
+        Debug.Log( $" targets contains me: {targets.Contains( self )}" );
 
         return targets;
 
