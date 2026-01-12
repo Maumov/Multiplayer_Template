@@ -111,12 +111,6 @@ namespace Client.Player
         public void TakeDamage( int damage )
         {
             Debug.Log( $"Start" );
-            
-            if ( !IsServer )
-            {
-                return;
-            }
-
             Debug.Log( $"Take Damage in PlayerController" );
             health.Value -= damage;
             OnHealthChange?.Invoke();
