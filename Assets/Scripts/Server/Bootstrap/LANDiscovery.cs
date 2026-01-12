@@ -67,8 +67,6 @@ namespace Assets.Scripts.Server.Bootstrap
         */
         void Update()
         {
-
-
             if ( !NetworkManager.Singleton.IsServer )
             {
                 if ( pendingServers.Count > 0 )

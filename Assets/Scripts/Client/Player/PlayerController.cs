@@ -16,8 +16,11 @@ namespace Client.Player
         private bool canControlCharacter;
         private TargetFinder targetFinder;
 
-        public NetworkVariable<ulong> CharacterNetId = new( 0 );
+        [Header( "UI" )]
+        public GameObject UIPrefab;
+        public PlayerUIController uiController;
 
+        public NetworkVariable<ulong> CharacterNetId = new( 0 );
         public Transform spawnPoint; // opcional, referencia al CharacterSpawnPoint
 
 
@@ -39,10 +42,13 @@ namespace Client.Player
             if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
             {
                 characterInstance = netObj.gameObject;
+                //setup UI
+                GameObject ui = Instantiate( UIPrefab );
+                uiController = ui.GetComponent<PlayerUIController>();
+                uiController.Init( this );
+
             }
         }
-
-
 
         void Start()
         {
