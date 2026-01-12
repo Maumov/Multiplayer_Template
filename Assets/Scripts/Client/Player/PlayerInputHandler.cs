@@ -27,12 +27,10 @@ namespace Client.Player
             }
             if ( Input.GetKeyDown( move ) )
             {
-                Debug.Log( "RequestMove" );
                 actions.RequestMove();
             }
             if ( Input.GetKeyDown( spawnCharacter ) )
             {
-                Debug.Log( "SpawnCharacter" );
                 networkHandler.SpawnCharacter();
             }
         }

@@ -125,17 +125,21 @@ namespace Client.Player
         #region ATTACK
         public void RequestAttack()
         {
+
             List<ulong> targets = targetFinder.GetTarget();
             if ( targets.Count == 0 )
                 return;
             
             ulong targetId = targets[ 0 ];
+            Debug.Log( $"Start Request Attack" );
             RequestAttackServerRpc( targetId );
         }
 
         [ServerRpc]
         private void RequestAttackServerRpc( ulong target )
         {
+            if ( !IsServer )
+                return; // Extra seguridad
             // NO lógica aquí
             Server.Player.ServerPlayerActions.HandleAttack( OwnerClientId, target );
         }
@@ -144,14 +148,10 @@ namespace Client.Player
         #region MOVE
         public void Move()
         {
-            Debug.Log( "Entro3" );
             if ( !IsOwner || characterInstance == null )
             {
-                Debug.Log( $"Entro4 { canControlCharacter}, {characterInstance}" );
                 return;
             }
-            Debug.Log( $"Entro5 {canControlCharacter}, {characterInstance}" );
-
             Vector3 newPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
             RequestMoveServerRPC( newPosition );
         }
