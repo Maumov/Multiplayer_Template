@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class EntityController : MonoBehaviour
 {
-
     PlayerController playerController;
+    [SerializeField] EntityWorldUI entityWorldUI;
 
     public void Init( PlayerController owner )
     {
@@ -20,7 +20,6 @@ public class EntityController : MonoBehaviour
         {
             playerController.TakeDamage( amount  );
         }
-        
+        entityWorldUI.UpdateText( $"{playerController.health.Value}");
     }
-
 }

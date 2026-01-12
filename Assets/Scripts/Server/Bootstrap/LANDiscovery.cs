@@ -50,7 +50,7 @@ namespace Assets.Scripts.Server.Bootstrap
                 listener.BeginReceive( OnReceive, null );
                 listening = true;
 
-                Debug.Log( "[LANDiscovery] Listening on UDP " + port );
+                //Debug.Log( "[LANDiscovery] Listening on UDP " + port );
             }
             catch ( Exception e )
             {
@@ -122,7 +122,7 @@ namespace Assets.Scripts.Server.Bootstrap
                         return; // ignora self
                     */
                     pendingServers.Add( ip ); // solo agrega a la lista
-                    Debug.Log( "[LANDiscovery] Server found: " + ep.Address );
+                    //Debug.Log( "[LANDiscovery] Server found: " + ep.Address );
                 }
             }
             catch ( SocketException )
