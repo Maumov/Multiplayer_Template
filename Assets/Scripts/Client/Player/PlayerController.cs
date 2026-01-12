@@ -8,7 +8,7 @@ namespace Client.Player
     public class PlayerController : NetworkBehaviour
     {
         [Header( "Player Stats" )]
-        public NetworkVariable<int> health = new NetworkVariable<int>( 100 );
+        public NetworkVariable<int> health = new NetworkVariable<int>( 100,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server );
 
         [Header( "Character" )]
         public GameObject characterPrefab; // prefab visual / jugable
@@ -36,7 +36,7 @@ namespace Client.Player
 
             // Se ejecuta en host y clientes
             CharacterNetId.OnValueChanged += OnCharacterAssigned;
-
+            health.OnValueChanged += OnHealthChanged;
             // Si ya hay Character (late joiner)
             if ( CharacterNetId.Value != 0 )
                 OnCharacterAssigned( 0, CharacterNetId.Value );
@@ -108,12 +108,15 @@ namespace Client.Player
         #endregion
 
         #region RECEIVE DAMAGE
+        void OnHealthChanged( int oldValue, int newValue )
+        {
+            OnHealthChange?.Invoke();
+        }
         public void TakeDamage( int damage )
         {
             Debug.Log( $"Start" );
             Debug.Log( $"Take Damage in PlayerController" );
             health.Value -= damage;
-            OnHealthChange?.Invoke();
             if ( health.Value <= 0 )
             {
                 // Lógica muerte
