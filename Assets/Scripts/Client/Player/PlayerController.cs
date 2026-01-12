@@ -18,7 +18,7 @@ namespace Client.Player
 
         [Header( "UI" )]
         public GameObject UIPrefab;
-        public PlayerUIController uiController;
+        private PlayerUIController uiController;
 
         public NetworkVariable<ulong> CharacterNetId = new( 0 );
         public Transform spawnPoint; // opcional, referencia al CharacterSpawnPoint

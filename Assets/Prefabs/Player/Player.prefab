@@ -114,6 +114,10 @@ MonoBehaviour:
     m_InternalValue: 100
   characterPrefab: {fileID: 2293571680899113747, guid: ba2ba8245b373dc449f4f09fd6d8fb47,
     type: 3}
+  UIPrefab: {fileID: 2352479341024889831, guid: c8d58b33ff09a9b46b13a99a61503b7f,
+    type: 3}
+  CharacterNetId:
+    m_InternalValue: 0
   spawnPoint: {fileID: 153092392298375068}
 --- !u!1 &1636251088774193291
 GameObject:
