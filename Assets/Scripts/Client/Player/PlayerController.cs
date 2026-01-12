@@ -112,8 +112,13 @@ namespace Client.Player
         
         public void Move()
         {
-            if ( !canControlCharacter || characterInstance == null)
+            Debug.Log( "Entro3" );
+            if ( !canControlCharacter || characterInstance == null )
+            {
+                Debug.Log( $"Entro4 { canControlCharacter}, {characterInstance}" );
                 return;
+            }
+            Debug.Log( "Entro5" );
 
             characterInstance.transform.position = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
         }
