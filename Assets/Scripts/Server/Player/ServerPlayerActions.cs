@@ -17,6 +17,7 @@ namespace Server.Player
                 Debug.Log( "Attack was to self" );
                 return;
             }
+            Debug.Log( $"Processing attack from {attackerId} to {target}."  );
             ServerCombatSystem.Instance.ProcessAttack( attackerId, target );
         }
     }
