@@ -1,15 +1,17 @@
 using Client.Player;
 using Shared.Combat;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DamageableObject : MonoBehaviour, IDamageable
 {
-    PlayerController playerController;
+    EntityController controller;
 
+    void Start()
+    {
+        controller = GetComponent<EntityController>();
+    }
     public void ApplyDamage( DamageResult result )
     {
-        playerController.TakeDamage( result.FinalDamage );
+        controller.TakeDamage( result.FinalDamage );
     }
 }

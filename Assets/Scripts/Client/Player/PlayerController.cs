@@ -42,7 +42,10 @@ namespace Client.Player
             if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
             {
                 characterInstance = netObj.gameObject;
+                characterInstance.GetComponent<EntityController>().Init( this );
+
                 targetFinder = characterInstance.GetComponent<TargetFinder>();
+
                 //setup UI
                 GameObject ui = Instantiate( UIPrefab );
                 uiController = ui.GetComponent<PlayerUIController>();
