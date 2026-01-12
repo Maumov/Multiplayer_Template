@@ -21,8 +21,13 @@ namespace Client.Player
 
         public void RequestMove()
         {
+            Debug.Log( "Entro0" );
             if ( !IsOwner )
+            {
+                Debug.Log( "Entro1" );
                 return;
+            }
+            Debug.Log("Entro2");
 
             controller.Move();
             //RequestMoveServerRpc();
