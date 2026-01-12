@@ -12,6 +12,7 @@ public class DamageableObject : MonoBehaviour, IDamageable
     }
     public void ApplyDamage( DamageResult result )
     {
+        Debug.Log( $"Apply Damage in IDamageable" );
         controller.TakeDamage( result.FinalDamage );
     }
 }

@@ -109,14 +109,21 @@ namespace Client.Player
         #region RECEIVE DAMAGE
         public void TakeDamage( int damage )
         {
+            Debug.Log( $"Start" );
+            
             if ( !IsServer )
+            {
                 return;
+            }
+
+            Debug.Log( $"Take Damage in PlayerController" );
             health.Value -= damage;
             OnHealthChange?.Invoke();
             if ( health.Value <= 0 )
             {
                 // Lógica muerte
             }
+            Debug.Log( $"Take Damage End" );
         }
         #endregion
 

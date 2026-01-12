@@ -15,6 +15,7 @@ public class EntityController : MonoBehaviour
 
     public void TakeDamage( int amount )
     {
+        Debug.Log( $"Take Damage in Entity Controller" );
         if ( playerController != null )
         {
             playerController.TakeDamage( amount  );

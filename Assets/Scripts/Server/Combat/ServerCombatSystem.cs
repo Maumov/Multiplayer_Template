@@ -17,6 +17,7 @@ namespace Server.Combat
 
         public void ProcessAttack( ulong attackerId, ulong target )
         {
+            Debug.Log( $"Start ProcessAttack" );
             if ( !IsServer )
                 return;
 
@@ -31,11 +32,14 @@ namespace Server.Combat
                 return;
             */
 
-
-
+            Debug.Log( $"Finding Id" );
             if ( !NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( target, out var targetNetObj ) )
+            {
+                Debug.Log( $"Id not found" );
                 return;
+            }
 
+            Debug.Log( $"Damage processing Start" );
             //target
             IDamageable damageable = targetNetObj.GetComponent<IDamageable>();
 
@@ -46,8 +50,9 @@ namespace Server.Combat
                 CriticalChance = 0.0f
             };
             DamageResult result = DamageCalculator.Calculate( data );
-
+            Debug.Log( $"Damage processing End" );
             //Apply damage
+            Debug.Log( $"Applying damage" );
             damageable.ApplyDamage( result );
         }
 
