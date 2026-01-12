@@ -37,23 +37,6 @@ namespace Client.Player
                 OnCharacterAssigned( 0, CharacterNetId.Value );
         }
 
-        private void OnCharacterAssigned( ulong oldId, ulong newId )
-        {
-            if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
-            {
-                characterInstance = netObj.gameObject;
-                characterInstance.GetComponent<EntityController>().Init( this );
-
-                targetFinder = characterInstance.GetComponent<TargetFinder>();
-
-                //setup UI
-                GameObject ui = Instantiate( UIPrefab );
-                uiController = ui.GetComponent<PlayerUIController>();
-                uiController.Init( this );
-
-            }
-        }
-
         void Start()
         {
             if ( !IsOwner )
@@ -64,6 +47,7 @@ namespace Client.Player
 
         }
 
+        #region SPAWN CHARACTER
         public void SpawnCharacter()
         {
             if ( !IsOwner )
@@ -99,6 +83,25 @@ namespace Client.Player
             CharacterNetId.Value = netObj.NetworkObjectId;
         }
 
+        private void OnCharacterAssigned( ulong oldId, ulong newId )
+        {
+            if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
+            {
+                characterInstance = netObj.gameObject;
+                characterInstance.GetComponent<EntityController>().Init( this );
+
+                targetFinder = characterInstance.GetComponent<TargetFinder>();
+
+                //setup UI
+                GameObject ui = Instantiate( UIPrefab );
+                uiController = ui.GetComponent<PlayerUIController>();
+                uiController.Init( this );
+
+            }
+        }
+        #endregion
+
+        #region RECEIVE DAMAGE
         public void TakeDamage( int damage )
         {
             if ( !IsServer )
@@ -110,7 +113,24 @@ namespace Client.Player
                 // Lógica muerte
             }
         }
-        
+        #endregion
+
+        #region ATTACK
+        public void RequestAttack()
+        {
+            List<ulong> targets = targetFinder.GetTarget();
+            ulong targetId = targets[ 0 ];
+            RequestAttackServerRpc( targetId );
+        }
+
+        [ServerRpc]
+        private void RequestAttackServerRpc( ulong target )
+        {
+            // NO lógica aquí
+            Server.Player.ServerPlayerActions.HandleAttack( OwnerClientId, target );
+        }
+        #endregion
+        #region MOVE
         public void Move()
         {
             Debug.Log( "Entro3" );
@@ -133,19 +153,7 @@ namespace Client.Player
 
             characterInstance.transform.position = position;
         }
+        #endregion
 
-        public void RequestAttack()
-        {
-            List<ulong> targets = targetFinder.GetTarget();
-            ulong targetId = targets[ 0 ];
-            RequestAttackServerRpc( targetId );
-        }
-
-        [ServerRpc]
-        private void RequestAttackServerRpc( ulong target)
-        {
-            // NO lógica aquí
-            Server.Player.ServerPlayerActions.HandleAttack( OwnerClientId, target );
-        }
     }
 }

@@ -1,7 +1,6 @@
 using Server.Combat;
-using Shared.Combat;
-using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Server.Player
 {
@@ -13,6 +12,11 @@ namespace Server.Player
             if ( !NetworkManager.Singleton.ConnectedClients.ContainsKey( attackerId ) )
                 return;
 
+            if (attackerId == target)
+            {
+                Debug.Log( "Attack was to self" );
+                return;
+            }
             ServerCombatSystem.Instance.ProcessAttack( attackerId, target );
         }
     }
