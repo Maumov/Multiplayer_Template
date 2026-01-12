@@ -24,6 +24,7 @@ namespace Client.Player
         public delegate void PlayerControllerDelegate();
         public event PlayerControllerDelegate OnHealthChange;
 
+        /*
         public override void OnNetworkSpawn()
         {
             // Esto se ejecuta en clientes y host
@@ -51,6 +52,7 @@ namespace Client.Player
                 }
             }
         }
+        */
 
         void Start()
         {
@@ -93,9 +95,9 @@ namespace Client.Player
 
             // Damos ownership al jugador
             netObj.SpawnWithOwnership( OwnerClientId );
-            
+            characterInstance = go;
             // Guardamos el NetworkObjectId para referencia futura
-            CharacterNetId.Value = netObj.NetworkObjectId;
+            //CharacterNetId.Value = netObj.NetworkObjectId;
         }
 
         public void TakeDamage( int damage )
