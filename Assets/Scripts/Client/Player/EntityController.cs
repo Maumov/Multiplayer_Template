@@ -11,6 +11,9 @@ public class EntityController : MonoBehaviour
     public void Init( PlayerController owner )
     {
         playerController = owner;
+
+        playerController.OnHealthChange += UpdateEntityUI;
+        UpdateEntityUI();
     }
 
     public void TakeDamage( int amount )
@@ -20,6 +23,10 @@ public class EntityController : MonoBehaviour
         {
             playerController.TakeDamage( amount  );
         }
-        entityWorldUI.UpdateText( $"{playerController.health.Value}");
+    }
+
+    void UpdateEntityUI()
+    {
+        entityWorldUI.UpdateText( $"{playerController.health.Value}" );
     }
 }

@@ -93,9 +93,11 @@ namespace Client.Player
             if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
             {
                 characterInstance = netObj.gameObject;
-                characterInstance.GetComponent<EntityController>().Init( this );
+                characterInstance.GetComponent<EntityController>().Init( this ); //ownership del personaje es este playerController.
                 if ( IsOwner )
                 {
+                    //Si es personaje de este jugador entonces instanciamos el resto de la UI Local
+
                     //Setup local stuff...
                     targetFinder = characterInstance.GetComponent<TargetFinder>();
                     //setup UI
