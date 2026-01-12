@@ -17,7 +17,8 @@ public class CheckGameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        string time = string.Format( "0:000.0", gameManager.MatchTime.Value );
+        float currentTime = gameManager.MatchTime.Value;
+        string time = string.Format( "{0:000.0}", currentTime);
         text.text = $"{time}";
     }
 }

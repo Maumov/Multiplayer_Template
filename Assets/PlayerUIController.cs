@@ -18,6 +18,6 @@ public class PlayerUIController : MonoBehaviour
 
     void UpdateHealth()
     {
-        health.text = $"{playerController.health}";
+        health.text = $"{playerController.health.Value}";
     }
 }
