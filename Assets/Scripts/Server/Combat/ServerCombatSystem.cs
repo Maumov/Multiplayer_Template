@@ -30,6 +30,9 @@ namespace Server.Combat
             if ( target == null )
                 return;
             */
+
+
+
             if ( !NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( target, out var targetNetObj ) )
                 return;
 
