@@ -93,9 +93,10 @@ namespace Client.Player
             if ( NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue( newId, out var netObj ) )
             {
                 characterInstance = netObj.gameObject;
+                characterInstance.GetComponent<EntityController>().Init( this );
                 if ( IsOwner )
                 {
-                    characterInstance.GetComponent<EntityController>().Init( this );
+                    //Setup local stuff...
                     targetFinder = characterInstance.GetComponent<TargetFinder>();
                     //setup UI
                     GameObject ui = Instantiate( UIPrefab );
