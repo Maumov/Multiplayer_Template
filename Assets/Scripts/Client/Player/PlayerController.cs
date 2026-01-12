@@ -124,6 +124,9 @@ namespace Client.Player
         public void RequestAttack()
         {
             List<ulong> targets = targetFinder.GetTarget();
+            if ( targets.Count == 0 )
+                return;
+            
             ulong targetId = targets[ 0 ];
             RequestAttackServerRpc( targetId );
         }
