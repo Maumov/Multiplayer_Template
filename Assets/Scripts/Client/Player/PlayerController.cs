@@ -66,11 +66,11 @@ namespace Client.Player
                 return;
 
             Vector3 spawnPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
-            SpawnCharacterServerRpc( spawnPosition );
+            SpawnCharacterServerRpc( spawnPosition, OwnerClientId );
         }
 
         [ServerRpc]
-        void SpawnCharacterServerRpc( Vector3 spawnPosition )
+        void SpawnCharacterServerRpc( Vector3 spawnPosition, ulong _ownerClientId )
         {
             if ( !IsServer )
                 return; // Extra seguridad
@@ -84,8 +84,7 @@ namespace Client.Player
             NetworkObject netObj = go.GetComponent<NetworkObject>();
 
             // Spawn con ownership del cliente
-            netObj.SpawnWithOwnership( OwnerClientId );
-
+            netObj.SpawnWithOwnership( _ownerClientId );
             // Guardamos NetworkObjectId para que los clientes lo resuelvan
             CharacterNetId.Value = netObj.NetworkObjectId;
         }
@@ -110,9 +109,19 @@ namespace Client.Player
                 Debug.Log( $"Entro4 { canControlCharacter}, {characterInstance}" );
                 return;
             }
-            Debug.Log( "Entro5" );
+            Debug.Log( $"Entro5 {canControlCharacter}, {characterInstance}" );
 
-            characterInstance.transform.position = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
+            Vector3 newPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
+            RequestMoveServerRPC( newPosition );
+        }
+
+        [ServerRpc]
+        public void RequestMoveServerRPC( Vector3 position )
+        {
+            if ( !IsServer )
+                return; // Extra seguridad
+
+            characterInstance.transform.position = position;
         }
 
         public void RequestAttack()
