@@ -1,19 +1,28 @@
 using Client.Player;
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EntityController : MonoBehaviour
+public class EntityController : NetworkBehaviour
 {
     PlayerController playerController;
     [SerializeField] EntityWorldUI entityWorldUI;
 
-    public void Init( PlayerController owner )
+    public override void OnNetworkSpawn()
     {
-        playerController = owner;
+        if ( !IsOwner )
+            return;
 
-        playerController.OnHealthChange += UpdateEntityUI;
-        UpdateEntityUI();
+        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[ OwnerClientId ].PlayerObject;
+
+        playerController = playerObject.GetComponent<PlayerController>();
+        playerController.SetCharacterInstance( gameObject );
+        //TODO CAMBIAR EL UpdateEntityUI...
+        //aqui estoy subscrito al evento de playerController y no debe hacerse asi...
+        if ( playerController != null)
+        {
+            playerController.OnHealthChange += UpdateEntityUI;
+            UpdateEntityUI();
+        }
     }
 
     public void TakeDamage( int amount )
