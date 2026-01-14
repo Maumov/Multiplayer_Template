@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 60696129
+  GlobalObjectIdHash: 410397550
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityWorldUI: {fileID: 6283081074707193172}
+  CharacterStats: {fileID: 4703061464834336757}
 --- !u!114 &8758913889287252855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +160,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f59a0e0fccec6240b75362596f48d23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth:
+    m_InternalValue: 100
+  currentHealth:
+    m_InternalValue: 100
 --- !u!1 &3667676343399870550
 GameObject:
   m_ObjectHideFlags: 0
