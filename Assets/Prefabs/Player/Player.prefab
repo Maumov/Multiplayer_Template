@@ -85,6 +85,7 @@ MonoBehaviour:
   spawnCharacter: 32
   attack: 49
   move: 119
+  Upgrade: 113
 --- !u!114 &1732856352051902068
 MonoBehaviour:
   m_ObjectHideFlags: 0

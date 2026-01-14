@@ -4,38 +4,46 @@ using UnityEngine;
 
 public class EntityController : NetworkBehaviour
 {
-    PlayerController playerController;
     [SerializeField] EntityWorldUI entityWorldUI;
 
+    [SerializeField] CharacterStats CharacterStats;
+    
+    public delegate void EntityControllerDelegate();
+    public event EntityControllerDelegate OnHealthChange;
     public override void OnNetworkSpawn()
     {
         if ( !IsOwner )
-            return;
+            return;      
 
-        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[ OwnerClientId ].PlayerObject;
-
-        playerController = playerObject.GetComponent<PlayerController>();
-        playerController.SetCharacterInstance( gameObject );
-        //TODO CAMBIAR EL UpdateEntityUI...
-        //aqui estoy subscrito al evento de playerController y no debe hacerse asi...
-        if ( playerController != null)
-        {
-            playerController.OnHealthChange += UpdateEntityUI;
-            UpdateEntityUI();
-        }
     }
 
-    public void TakeDamage( int amount )
+    public void SetInitToCharacter( int health )
     {
-        Debug.Log( $"Take Damage in Entity Controller" );
-        if ( playerController != null )
-        {
-            playerController.TakeDamage( amount  );
-        }
+        CharacterStats.SetStats( health );
     }
 
+    private void Start()
+    {
+        OnHealthChange += UpdateEntityUI;
+    }
+
+
+    #region RECEIVE DAMAGE
     void UpdateEntityUI()
     {
-        entityWorldUI.UpdateText( $"{playerController.health.Value}" );
+        entityWorldUI.UpdateText( $"{CharacterStats.currentHealth.Value}/{CharacterStats.maxHealth.Value}" );
     }
+    public void TakeDamage( int damage )
+    {
+        Debug.Log( $"Start" );
+        Debug.Log( $"Take Damage in Entity Controller" );
+        damage = damage > 0 ? -damage : damage; //So is a negative value
+        
+        CharacterStats.UpdateHealth( damage );
+
+        OnHealthChange?.Invoke();
+
+        Debug.Log( $"Take Damage End" );
+    }
+    #endregion
 }

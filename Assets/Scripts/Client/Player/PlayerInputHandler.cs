@@ -7,15 +7,15 @@ namespace Client.Player
     public class PlayerInputHandler : NetworkBehaviour
     {
         private ClientPlayerActions actions;
-        private PlayerController networkHandler;
+        private PlayerController playerController;
         public KeyCode spawnCharacter;
         public KeyCode attack;
         public KeyCode move;
-
+        public KeyCode Upgrade;
         void Awake()
         {
             actions = GetComponent<ClientPlayerActions>();
-            networkHandler = GetComponent<PlayerController>();
+            playerController = GetComponent<PlayerController>();
         }
 
         void Update()
@@ -31,7 +31,11 @@ namespace Client.Player
             }
             if ( Input.GetKeyDown( spawnCharacter ) )
             {
-                networkHandler.SpawnCharacter();
+                playerController.SpawnCharacter();
+            }
+            if ( Input.GetKeyDown( Upgrade ) )
+            {
+                playerController.UpgradeCharacter();
             }
         }
     }

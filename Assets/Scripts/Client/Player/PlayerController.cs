@@ -23,10 +23,6 @@ namespace Client.Player
         public NetworkVariable<ulong> CharacterNetId = new( 0 );
         public Transform spawnPoint; // opcional, referencia al CharacterSpawnPoint
 
-
-        public delegate void PlayerControllerDelegate();
-        public event PlayerControllerDelegate OnHealthChange;
-
         public override void OnNetworkSpawn()
         {
             if ( IsOwner )
@@ -36,7 +32,7 @@ namespace Client.Player
 
             // Se ejecuta en host y clientes
             CharacterNetId.OnValueChanged += OnCharacterAssigned;
-            health.OnValueChanged += OnHealthChanged;
+            
             // Si ya hay Character (late joiner)
             if ( CharacterNetId.Value != 0 )
                 OnCharacterAssigned( 0, CharacterNetId.Value );
@@ -61,15 +57,15 @@ namespace Client.Player
             if ( characterPrefab == null )
                 return;
 
-            if ( characterInstance != null ) 
+            if ( CharacterNetId.Value != 0 ) 
                 return;
 
             Vector3 spawnPosition = new Vector3( Random.Range( -3f, 3f ), 1f, Random.Range( -3f, 3f ) );
-            SpawnCharacterServerRpc( spawnPosition, OwnerClientId );
+            RequestSpawnCharacterServerRpc( spawnPosition );
         }
 
         [ServerRpc]
-        void SpawnCharacterServerRpc( Vector3 spawnPosition, ulong _ownerClientId )
+        void RequestSpawnCharacterServerRpc( Vector3 spawnPosition )
         {
             if ( !IsServer )
                 return; // Extra seguridad
@@ -83,7 +79,10 @@ namespace Client.Player
             NetworkObject netObj = go.GetComponent<NetworkObject>();
 
             // Spawn con ownership del cliente
-            netObj.SpawnWithOwnership( _ownerClientId );
+            netObj.SpawnWithOwnership( OwnerClientId );
+            EntityController entity = netObj.GetComponent<EntityController>();
+            entity.SetInitToCharacter( health.Value );
+
             // Guardamos NetworkObjectId para que los clientes lo resuelvan
             CharacterNetId.Value = netObj.NetworkObjectId;
         }
@@ -103,34 +102,15 @@ namespace Client.Player
                     //setup UI
                     GameObject ui = Instantiate( UIPrefab );
                     uiController = ui.GetComponent<PlayerUIController>();
-                    uiController.Init( this );
+                    uiController.Init( characterInstance );
                 }
             }
-        }
-        #endregion
-
-        #region RECEIVE DAMAGE
-        void OnHealthChanged( int oldValue, int newValue )
-        {
-            OnHealthChange?.Invoke();
-        }
-        public void TakeDamage( int damage )
-        {
-            Debug.Log( $"Start" );
-            Debug.Log( $"Take Damage in PlayerController" );
-            health.Value -= damage;
-            if ( health.Value <= 0 )
-            {
-                // Lógica muerte
-            }
-            Debug.Log( $"Take Damage End" );
         }
         #endregion
 
         #region ATTACK
         public void RequestAttack()
         {
-
             List<ulong> targets = targetFinder.GetTarget();
             if ( targets.Count == 0 )
                 return;
@@ -170,11 +150,26 @@ namespace Client.Player
             characterInstance.transform.position = position;
         }
 
-        internal void SetCharacterInstance( GameObject _gameObject )
+        #endregion
+        #region UpgradeCharacter
+        public void UpgradeCharacter()
         {
-            characterInstance = _gameObject;
+            if ( !IsOwner )
+            {
+                return;
+            }
+            
+            RequestUpgradeCharacterServerRPC();
+        }
+
+        [ServerRpc]
+        public void RequestUpgradeCharacterServerRPC( )
+        {
+            if ( !IsServer )
+                return; // Extra seguridad
+
+            health.Value += 100;
         }
         #endregion
-
     }
 }

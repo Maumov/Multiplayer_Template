@@ -4,26 +4,28 @@ using UnityEngine;
 
 public class PlayerUIController : MonoBehaviour
 {
-    PlayerController playerController;
+    EntityController targetEntity;
+    CharacterStats characterStats;
     [SerializeField] TextMeshProUGUI id;
     [SerializeField] TextMeshProUGUI health;
 
-    public void Init( PlayerController owner )
+    public void Init( GameObject targetCharacter )
     {
-        playerController = owner;
+        targetEntity = targetCharacter.GetComponent<EntityController>();
+        characterStats = targetCharacter.GetComponent<CharacterStats>();
 
         UpdateHealth();
         SetId();
-        playerController.OnHealthChange += UpdateHealth;
+        targetEntity.OnHealthChange += UpdateHealth;
     }
 
     void SetId()
     {
-        id.text = $"{playerController.CharacterNetId}";
+        id.text = $"{ characterStats.NetworkObjectId }";
     }
 
     void UpdateHealth()
     {
-        health.text = $"{playerController.health.Value}";
+        health.text = $"{characterStats.currentHealth.Value}";
     }
 }
