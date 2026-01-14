@@ -17,6 +17,7 @@ public class CharacterStats : NetworkBehaviour, IStats
 
     public void UpdateHealth( int amount )
     {
+        Debug.Log("Health Updated");
         currentHealth.Value += amount;
     }
 }

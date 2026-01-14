@@ -12,9 +12,7 @@ public class EntityController : NetworkBehaviour
     public event EntityControllerDelegate OnHealthChange;
     public override void OnNetworkSpawn()
     {
-        if ( !IsOwner )
-            return;      
-
+        UpdateEntityUI();
     }
 
     public void SetInitToCharacter( int health )
