@@ -8,23 +8,17 @@ public class EntityController : NetworkBehaviour
 
     [SerializeField] CharacterStats CharacterStats;
     
-    public delegate void EntityControllerDelegate();
-    public event EntityControllerDelegate OnHealthChange;
     public override void OnNetworkSpawn()
     {
         UpdateEntityUI();
+        CharacterStats.currentHealthUpdated += UpdateEntityUI;
     }
 
     public void SetInitToCharacter( int health )
     {
         CharacterStats.SetStats( health );
+        UpdateEntityUI();
     }
-
-    private void Start()
-    {
-        OnHealthChange += UpdateEntityUI;
-    }
-
 
     #region RECEIVE DAMAGE
     void UpdateEntityUI()
@@ -38,8 +32,6 @@ public class EntityController : NetworkBehaviour
         damage = damage > 0 ? -damage : damage; //So is a negative value
         
         CharacterStats.UpdateHealth( damage );
-
-        OnHealthChange?.Invoke();
 
         Debug.Log( $"Take Damage End" );
     }

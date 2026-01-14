@@ -16,7 +16,7 @@ public class PlayerUIController : MonoBehaviour
 
         UpdateHealth();
         SetId();
-        targetEntity.OnHealthChange += UpdateHealth;
+        characterStats.currentHealthUpdated += UpdateHealth;
     }
 
     void SetId()
